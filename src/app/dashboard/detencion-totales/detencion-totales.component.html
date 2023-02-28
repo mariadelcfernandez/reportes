@@ -1,0 +1,20 @@
+<mat-card>
+    <mat-card-content>
+        <div class="container-title">
+        <h2>Totales</h2>          
+        </div>     
+        <ul>
+        <li>Total Detenciones: <b>{{ totales?.total_detenciones }}</b></li>
+        <li>Total Menores: <b>{{ totales?.total_menores }}</b></li>
+        <li>Detención más reciente: <b>{{ totales?.ultima_detencion  | date:'dd/MM/yyyy HH:mm' }}</b></li>
+        </ul>
+        <div class="container-title">
+        <h2>Detenciones por Dependencia</h2>   
+        </div>   
+        <ul>
+        <li *ngFor="let dep of totales?.total_por_dependencia">
+            {{dep.descripcion}}: <b>{{dep.total}}</b>
+        </li>
+        </ul>
+    </mat-card-content>
+</mat-card>

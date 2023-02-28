@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Reporte Detenidos</h1>
+<div mat-dialog-content>
+    <form class="example-form">
+        <mat-form-field class="example-full-width">
+          <mat-label>Observaciones</mat-label>
+          <textarea matInput  #obs maxlength="256" rows="3" matInput [formControl]="observaciones" placeholder="Ingrese una observacion para el reporte"></textarea>
+          <mat-hint align="end">{{obs.value.length}} / 256</mat-hint>
+          <mat-error *ngIf="observaciones.hasError('required')">
+            Campo requerido
+          </mat-error>
+        </mat-form-field>
+      </form>
+</div>
+<div mat-dialog-actions align="end" fxflex>
+  <button mat-raised-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary"(click)="guardar()">Guardar</button>
+</div>
+

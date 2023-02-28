@@ -1,0 +1,22 @@
+.fondo-gris{
+    background-color: lightgray;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.subtitulo{
+    margin-top: 4px;
+    margin-bottom: -4px;
+}
+
+.text-small{
+    font-size: x-small;
+  }
+  
+.text-mediun{
+font-size: medium;
+}
+
+.text-large{
+font-size: large;
+}

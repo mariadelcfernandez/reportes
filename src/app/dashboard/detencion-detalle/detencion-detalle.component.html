@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Detalle de Detención</h2>
+  <span class="br-gray" style="font-size: 15px;">
+    <i>Detención ID: {{data.detencion_id}}</i>
+  </span>
+
+<hr class="br-gray">
+<mat-dialog-content class="mat-typography" >
+
+  <p>Fecha de la detención: <span class="text-large">{{data.fecha  | date:'dd/MM/yyyy HH:mm'}}</span></p>
+
+  <p>Cantidad de días: <span class="text-large">{{data.cantidad_dias}}</span></p>
+
+  <p>Dependencia: <span class="text-large">{{data.dependencia.descripcion }}</span></p>
+
+  <p>Delito: <span class="text-large">{{data.delito}}</span></p>
+
+  <div class="fondo-gris">
+    
+    <div class="subtitulo">DETENIDO</div>
+    <hr class="br-white">
+    <p>Apellido y nombre: <span class="text-large">{{  data.persona.apellido }}, {{ data.persona.nombre }}</span></p>
+  
+    <p>Documento N°: <span class="text-large">{{  data.persona.numero_documento }}</span></p>
+  
+    <p>Fecha de Nacimiento: <span class="text-large">{{  data.persona.fecha_nacimiento  | date:'dd/MM/yyyy'}}</span></p>
+  
+    <p>Edad: <span class="text-large"> {{  getEdad(data.persona.fecha_nacimiento) }}</span></p>
+
+  </div>
+
+  
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button [mat-dialog-close]="true" cdkFocusInitial>Cerrar</button>
+</mat-dialog-actions>

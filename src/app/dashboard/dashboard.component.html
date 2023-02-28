@@ -1,66 +1,112 @@
-    <div class="container">
-     
-      <div fxflex="70" style="flex: 1 1 70%; box-sizing: border-box; max-width: 70%;"> 
+<div class="flex-container">
+
+  <div class="flex-item-left"> 
+
+    <mat-card>
+      <mat-card-content>
         <div class="container-title">
           <h1>Listado de Detenidos</h1>
           <button mat-stroked-button color="primary"(click)="listDetenciones()"> Obtener Detenciones </button>
-        </div>      
-        <table border="1">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>FECHA</th>
-              <th>APELLIDO y NOMBRE</th>
-              <th>DIAS</th>
-              <th>DEPENDENCIA</th>
-              <th>DELITO</th>
-            </tr>              
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of this.detenciones">
-            <td>{{item.detencion_id}}</td>
-            <td>{{item.fecha}}</td>
-            <td>{{item.persona.apellido}} {{item.persona.nombre}}</td>
-            <td>{{item.cantidad_dias}}</td>
-            <td>{{item.dependencia?.descripcion}}</td>
-            <td>{{item.delito}}</td>
-            </tr>              
-          </tbody>
-        </table>    
-      </div>
+        </div>        
+        
+        <div class="table-container mat-elevation-z4" style="height: 40%; max-height: auto;">
+          <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+        
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let element"> {{element.detencion_id}} </td>
+            </ng-container>
+        
+            <ng-container matColumnDef="fecha">
+              <th mat-header-cell *matHeaderCellDef>Fecha</th>
+              <td mat-cell *matCellDef="let element"> {{element.fecha | date:'dd/MM/yyyy'}}<br>{{element.fecha | date:'HH:mm'}}  </td>
+            </ng-container>
+        
+            <ng-container matColumnDef="persona">
+              <th mat-header-cell *matHeaderCellDef>Apellido y Nombre</th>
+              <td mat-cell *matCellDef="let element">{{element.persona.apellido}},<br>{{element.persona.nombre}}</td>
+            </ng-container>
+        
+            <ng-container matColumnDef="dias">
+              <th mat-header-cell *matHeaderCellDef>Días </th>
+              <td mat-cell *matCellDef="let element"><span [ngClass]="element.cantidad_dias>30?'fondo-rojo':''">{{element.cantidad_dias}}</span> </td>
+            </ng-container>
 
-      <div fxflex="30" style="flex: 1 1 30%; box-sizing: border-box; max-width: 30%;"> 
-        <div class="container-title">
-          <h2>Totales</h2>
-          
-        </div>     
-        <ul>
-          <li>Total_Detenciones: 0</li>
-          <li>Total_Menores: 0</li>
-          <li>Detencion más reciente: 0</li>
-        </ul>
+            <ng-container matColumnDef="dependencia">
+              <th mat-header-cell *matHeaderCellDef>Dependencia </th>
+              <td mat-cell *matCellDef="let element"> {{element.dependencia?.descripcion}} </td>
+            </ng-container>
 
-   
+            <ng-container matColumnDef="delito">
+              <th mat-header-cell *matHeaderCellDef>Delito </th>
+              <td mat-cell *matCellDef="let element"> {{element.delito}} </td>
+            </ng-container>
 
-        <div class="container-title">
-          <h2>Detenciones por Dependencia</h2>   
-        </div>   
-        <ul>
-          <li>UNIDAD PENAL NRO 9 PASO DE LOS LIBRES: 0</li>
-          <li>COMISARÍA 2da. - CURUZU CUATIA	: 0</li>
-          <li>COMISARÍA 1ra. ALCAIDÍA - CURUZU CUATIA	: 0</li>
-        </ul>
-  
-        <div class="buttonGroup" fxflex="30" style="margin-top: 50px;">
-          <button mat-stroked-button color="primary" [disabled]="!this.detenciones" (click)="calcularReporte()"> Generar Reporte </button>    
-           <button mat-stroked-button color="primary"> Enviar Reporte </button>
+            <ng-container matColumnDef="icono">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let row">
+                <button mat-icon-button matTooltip="Ver más detalle" (click)="verDetalle(row);$event.stopPropagation();">
+                  <mat-icon color="primary">find_in_page</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expand">
+              <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button matTooltip="Expandir fila" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                  <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+                  <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <!--DETALLE------------------------------------->
+            <ng-container matColumnDef="expandedDetail">
+              <td mat-cell *matCellDef="let element" class="fondo-gris" [attr.colspan]="columnsToDisplayWithExpand.length">
+                <div class="example-element-detail"
+                     [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                  <div class="example-element-description">
+                    <p class="subtitulo">DETENIDO:</p>
+                    <p><span class="text-small">Apellido y nombre: </span><span class="text-large">{{  element.persona.apellido }}, {{ element.persona.nombre }}</span>
+                    <br><span class="text-small">Documento N°: </span>{{  element.persona.numero_documento }}
+                    <br><span class="text-small">Fecha de Nacimiento: </span>{{  element.persona.fecha_nacimiento | date:'dd/MM/yyyy' }}
+                    <br><span class="text-small">Edad actual: </span>{{  element.persona.fecha_nacimiento | edad }}</p>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+            <!--FIN DETALLE----------------------------------->
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+            <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
+                [ngClass]="esMenor(element)?'fondo-menor':''"               
+                class="example-element-row"
+                [class.example-expanded-row]="expandedElement === element"
+                (click)="expandedElement = expandedElement === element ? null : element">
+            </tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']"                 
+                class="example-detail-row"></tr>
+          </table>
+        
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                        showFirstLastButtons
+                        aria-label="Select page of periodic elements">
+          </mat-paginator>
         </div>
+      </mat-card-content>
+    </mat-card>
+  </div>    
 
-       
-      </div>
+  <div class="flex-item-right"> 
 
-    
+    <app-detencion-totales [totales]="totales"></app-detencion-totales>
 
+    <div style="margin-top: 30px;">
+      <button mat-raised-button [disabled]="totales.total_detenciones>0? false: true" color="primary" (click)="GuardarReporte()">Guardar reporte</button>
     </div>
+    
+  </div>
 
+</div>
 
